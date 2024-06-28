@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="jquery-1.4.3.min.js"></script>
+
+    <style>
+        text {
+            font: 11pt AvenirNext;
+        }
+
+        svg {
+            display: block;
+        }
+
+        html, body, #imgContainer, svg {
+            margin: 0px;
+            padding: 0px;
+            height: 100%;
+            width: 100%;
+                display: flow;
+    align-content: center;
+        }
+
+        img {
+            position: absolute;
+            margin: auto;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .pic {
+          width: 100%;
+        }
+
+        .msg {
+        	color: white;
+        	font-size: 20pt;
+        }
+    </style>
+</head>
+<body>
+<div id="imgContainer" style="text-align:center">
+</div>
+<script>
+
+    /**
+     * Executed when a message is received from SAS VA (e.g. by interaction or filter)
+     * @param evt {Event}
+     */
+    function onMessage(evt) {
+    //debugger;
+        if (evt && evt.data && evt.data.data && evt.data.data.length > 0) {
+            var columnIndex = 0,
+                columnValues = evt.data.data.map(function (values) {
+                    return values[columnIndex]
+                });
+
+ 			$("#imgContainer").empty();
+
+            if (columnValues && columnValues.length === 1) {
+                var firstValue = columnValues[0],
+                    imageSrc = "images/" + firstValue.toLowerCase() + ".jpg";
+
+                var div = $("<img src=\"" + imageSrc + "\" class=\"pic\" alt='\"" + firstValue + "\"'/>");
+                $("#imgContainer").append(div);
+             } else {
+				var div = $("<p class=\"msg\">Please select a single data point.</p>");
+				$("#imgContainer").append(div);
+        	}
+        } else {
+        	var div = $("<p>Please assign data.</p>");
+     		$("#imgContainer").append(div);
+        }
+    }
+
+    if (window.addEventListener) {
+        window.addEventListener("message", onMessage, false);
+    } else {
+        window.attachEvent("onmessage", onMessage);
+    }
+</script>
+
+</body>
+</html>
